@@ -163,7 +163,7 @@
 
 %% sectioning commands
 \def\prefacesection#1{\clearpage\phantomsection
-	\addcontentsline{toc}{chapter}{#1}\chapter*{#1}}
+	\addcontentsline{toc}{chapter}{#1}\chapter*{#1}\markboth{#1}{}}
 
 %% Bibliography - natbib
 \if@natbib
