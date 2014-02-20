@@ -1,0 +1,68 @@
+%% ## Construye tu propia portada ##
+%% 
+%% Una portada se conforma por una secuencia de "Blocks" que incluyen
+%% piezas individuales de informaci'on. Un "Block" puede incluir, por
+%% ejemplo, el t'itulo del documento, una im'agen (logotipo de la universidad),
+%% el nombre del autor, nombre del supervisor, u cualquier otra pieza de
+%% informaci'on.
+%%
+%% Cada "Block" aparece centrado horizontalmente en la p'agina y,
+%% verticalmente, todos los "Blocks" se distruyen de manera uniforme 
+%% a lo largo de p'agina.
+%%
+%% Nota tambi'en que, dentro de un mismo "Block" se pueden cortar
+%% lineas usando el comando \\
+%%
+%% El tama'no del texto dentro de un "Block" se puede modificar usando uno de
+%% los comandos:
+%%   \small      \LARGE
+%%   \large      \huge
+%%   \Large      \Huge
+%%
+%% Y el tipo de letra se puede modificar usando:
+%%   \bfseries - negritas
+%%   \itshape  - it'alicas
+%%   \scshape  - small caps
+%%   \slshape  - slanted
+%%   \sffamily - sans serif
+%%
+%% Para producir plantillas generales, la informaci'on que ha sido inclu'ida
+%% en el archivo principal "tesis.tex" se puede accesar aqu'i usando:
+%%   \insertauthor
+%%   \inserttitle
+%%   \insertsupervisor
+%%   \insertinstitution
+%%   \insertdegree
+%%   \insertfaculty
+%%   \insertdepartment
+%%   \insertsubmitdate
+
+\begin{titlepage}
+  \TitleBlock{\scshape\insertinstitution}
+  \TitleBlock[\bigskip]{\scshape\insertfaculty}
+  \TitleBlock{\Huge\scshape\inserttitle}
+  \TitleBlock{\scshape
+    Tesis presentada por \insertauthor \\
+    para obtener el grado de \insertdegree}
+  \TitleBlock{\insertsubmitdate}
+  \TitleBlock[\bigskip]{\insertdepartment}
+\end{titlepage}
+
+%% Nota 1:
+%% Se puede agregar un escudo o logotipo en un "Block" como:
+%%   \TitleBlock{\includegraphics[height=4cm]{escudo_uni}}
+%% y teniendo un archivo "escudo_uni.pdf", "escudo_uni.png" o "escudo_uni.jpg"
+%% en alg'un lugar donde LaTeX lo pueda encontrar.
+
+%% Nota 2:
+%% Normalmente, el espacio entre "Blocks" se extiende de modo que el
+%% contenido se reparte uniformemente sobre toda la p'agina. Este
+%% comportamiento se puede modificar para mantener fijo, por ejemplo, el
+%% espacio entre un par de "Blocks". Escribiendo:
+%%   \TitleBlock{Bloque 1}
+%%   \TitleBlock[\bigskip]{Bloque2}
+%% se deja un espacio "grande" y de tama~no fijo entre el bloque 1 y 2.
+%% Adem'as de \bigskip est'an tambi'en \smallskip y \medskip. Si necesitas
+%% aun m'as control puedes usar tambi'en, por ejemplo, \vspace*{2cm}.
+
+
