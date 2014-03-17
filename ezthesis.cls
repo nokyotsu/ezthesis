@@ -2,7 +2,8 @@
 %%
 %% A custom thesis class
 %% by Juan Antonio Navarro Perez
-%% http://www.mpi-sws.org/~jnavarro/
+%% http://navarroj.com/latex
+%% ezlatex@navarroj.com
 %%
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{ezthesis}[2007/08/08 A custom thesis class]
