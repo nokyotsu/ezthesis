@@ -1,0 +1,274 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ezkeys}[2013/04/18 Add-ons for even easier and more powerful pgfkeys]
+
+\RequirePackage{pgffor,pgfkeys}
+\RequirePackage{etoolbox}
+
+% Toggle extensions
+% =================
+%
+% Extensions to the etoolbox's toggle mechanism
+
+% \iftesttrue{<always>}{<never>}
+% \iftestfalse{<never>}{<always>}
+%
+% Respectively, true/false constant tests that always expand to the first/second
+% argument.
+%
+\newcommand\iftesttrue{}  \let\iftesttrue\@firstoftwo
+\newcommand\iftestfalse{} \let\iftestfalse\@secondoftwo
+
+% \deftoggle{<toggle>}{\test}
+%
+% Instead of having a fixed value, whenever the `<toggle>` is evaluated, its value
+% is determined by evaluating the given `\test` instead.
+%
+\newrobustcmd*{\deftoggle}[2]{%
+  \ifcsdef{etb@tgl@#1}
+    {\csdef{etb@tgl@#1}{#2}}
+    {\etb@noglobal\etb@err@notoggle{#1}}}
+
+% \linktoggle{<toggle>}{<linked-toggle>}
+%
+% Instead of having a fixed value, whenever the `<toggle>` is evaluated, its value
+% is determined by evaluating the `<linked-toggle>` instead.
+%
+\newcommand*{\linktoggle}[2]{\deftoggle{#1}{\iftoggle{#2}}}
+
+% Low level pgfkeys extensions
+% ============================
+%
+% Extensions to the low-level key handling mechanism of pgfkeys.
+
+% \pgfkeysrequire{<full-key>}
+%
+% Raises an error if `<full-key>` is not defined.
+%
+\newcommand*\pgfkeysrequire[1]{\pgfkeysifdefined{#1}{}{%
+  \PackageError{ezkeys}{Unknown key `#1'. Perhaps you misspelled it}{}}}
+
+% \pgfkeysusevalue{<full-key>}
+%
+% Expands to the value currently stored in `<full-key>`, or raises an error if the key
+% is not currently storing a value.
+%
+\newcommand*\pgfkeysusevalue[1]{\pgfkeysrequire{#1}\pgfkeysvalueof{#1}}
+
+% \pgfkeysifempty{<full-key>}{<true>}{<false>}
+%
+% Tests whether the value stored at `<full-key>` is or not empty. An error is raised
+% if the key is not currently storing a value.
+%
+\newcommand*\pgfkeysifempty[1]{\pgfkeysrequire{#1}\ifcsempty{pgfk@#1}}
+
+% \pgfkeysprovidevalue{<full-key>}{<value>}
+%
+% If <full-key> is currently storing an empty value, this is replaced with <value>;
+% otherwise the current value is left unchanged. The key must be already defined.
+%
+\newcommand*\pgfkeysprovidevalue[2]{\pgfkeysifempty{#1}{\pgfkeyssetvalue{#1}{#2}}{}}
+
+% \pgfkeysifhascode{<full-key>}{<true>}{<false>}
+%
+% Tests whether `<full-key>/.code` has been set.
+%
+\newcommand*\pgfkeysifhascode[1]{\pgfkeysifdefined{#1/.@cmd}}
+
+% \pgfkeysusecode{<full-key>}{<args>}
+%
+% Executes the corresponding `<full-key>/.code` using the given <args>.
+% An error is raised if no such code has been defined.
+%
+% Note that, if the code expects no arguments, you still have to supply an empty
+% `<args>`. Likewise, if the code expects multiple arguments, you have to separate them
+% using nested curly braces \emph{within} `<args>`. For example after setting:
+%
+%   \pgfkeys{
+%      my package/.cd,
+%      bold/.code = \textbf{#1},
+%      range/.code 2 args = #1--#2,
+%      hello/.code = Hello World,
+%   }
+%
+% You can use:
+%
+%   \pgfkeysusecode{/my package/bold}{Hi!}
+%   \pgfkeysusecode{/my package/range}{{13}{42}}
+%   \pgfkeysusecode{/my package/hello}{}
+%
+% which will expand to:
+%
+%   \textbf{Hi!} 13--42 Hello World
+%
+\newcommand*\pgfkeysusecode[2]{\pgfkeysusevalue{#1/.@cmd}#2\pgfeov}
+
+% Key handlers
+% ============
+%
+% A set of new and powerful key handlers for easily achieving common tasks.
+
+% Key handler `<key>/.use`
+%
+% Simply expands to the contents stored in the `<key>`.
+%
+\pgfkeys{/handlers/.use/.code=\pgfkeysvalueof{\pgfkeyscurrentpath}}
+
+% Key handler `<key>/.set=<value>`
+%
+% Is in effect equivalent to just `<key>=<value>`. Useful to set a value
+% on the current default path (i.e. without explicitly giving a key).
+%
+\pgfkeys{/handlers/.set/.code=\pgfkeysalso{\pgfkeyscurrentpath={#1}}}
+
+% Key handler `<key>/.also=<key-values>`
+%
+% Is just equivalent to evaluating `<key-values>`. Interesting effects can be
+% achieved when combined with other handlers, e.g.
+%
+% \pgfkeys{
+%   /my package/.cd,
+%   style/.initial = {color=red,align=center},
+%   % ...
+%   .also/.expanded = \pgfkeysusevalue{/my package/style},
+% }
+%
+\pgfkeys{/handlers/.also/.code=\pgfkeysalso{#1}}
+\pgfkeys{/handlers/.ealso/.code=\pgfkeysalso{.also/.expanded={#1}}}
+
+% Key handler `<key>/.provide value=<value>`
+%
+% If <key> is currently storing an empty value, this is replaced with <value>;
+% otherwise the current value is left unchanged. The key must be already defined.
+%
+\pgfkeys{/handlers/.provide value/.code=\pgfkeysprovidevalue{\pgfkeyscurrentpath}{#1}}
+
+% Key handler `<key>/.append list=<value>`
+%
+% The selected `<key>` *must* be currently storing a value, which is assumed to be
+% a comma separated list of values. The effect is to append the new `<value>` to the
+% list, adding a comma if necessary. For example, after executing:
+%
+% \pgfkeys{
+%   /my package/.cd,
+%   fields/.initial = {},
+%   fields/.append list = {author},
+%   fields/.append list = {title},
+%   fields/.append list = {date},
+%  }
+%
+% then
+%
+%   \pgfkeysvalueof{/my package/fields}
+%
+% would return
+%
+%   author,title,date
+%
+\pgfkeys{/handlers/.append list/.code={%
+  \pgfkeysifempty\pgfkeyscurrentpath%
+    {\pgfkeysalso{\pgfkeyscurrentpath=#1}}%
+    {\pgfkeysalso{\pgfkeyscurrentpath/.append={,#1}}}}}
+
+% Key handler `<key>/.is code choice`
+%
+% While `.is choice` causes a selected subkey to be immediately executed, this handler
+% sets things up so that `<key>=<value>` will only \emph{remember} the selected
+% `<value>`, and delay the execution of the corresonding code in `<key>/<value>/.code`
+% only after explicitly requesting it by evaluating `<key>/.eval=<args>`.
+%
+% For example, after setting:
+%
+%   \pgfkeys{
+%     my package/.is family,
+%     my package,
+%     align/.is code choice,
+%     align/left/.code   = \raggedright,
+%     align/center/.code = \centering,
+%     align/right/.code  = \raggedleft,
+%     format/.is code choice,
+%     format/bold/.code    = \textbf{#1},
+%     format/italics/.code = \textit{#1},
+%   }
+%
+% Options can be selected using, e.g.:
+%
+%   \pgfkeys{my package,align=right,format=bold}
+%
+% which causes the selected options to remebered but \emph{not} executed. Only later,
+% when requesting it by explcitly evaluating
+%
+%   \pgfkeys{my package,align/.eval,/format/.eval=Hello}
+%
+% the corresponding subkeys will be executed and expanded, in this example to
+%
+%   \raggedleft\textbf{Hello}
+%
+% Recall that, alternatively, one can also write
+%
+%   \pgfkeysusecode{/my package/align/.eval}{}%
+%   \pgfkeysusecode{/my package/format/.eval}{Hello}
+%
+% to, slightly more efficiently, evaluate the selected options without calling pgfkeys.
+%
+\pgfkeys{/handlers/.is code choice/.code=%
+  \pgfkeys{
+    \pgfkeyscurrentpath/.cd,
+    .ecode={%
+      \noexpand\pgfkeysifdefined{\pgfkeysdefaultpath##1/.@cmd}{%
+        \noexpand\pgfkeysalso{\pgfkeysdefaultpath.eval/.code=%
+          \noexpand\pgfkeysusecode{\pgfkeysdefaultpath##1}{####1}}%
+      }{%
+        \noexpand\pgfkeysalso{/errors/unknown choice value={\pgfkeysdefaultpath}{##1}}%
+      }}}}
+
+% Fix a bug in the `/errors/unknown choice value={offending key}{value}` key
+% https://sourceforge.net/tracker/?func=detail&aid=3582837&group_id=142562&atid=752792
+%\pgfkeys{/errors/unknown choice value/.code 2 args=\pgfkeys@error{%
+%    Choice '#2' unknown in key '#1'. I am going to ignore this key}}
+
+% Key handler `<key>/.is toggle`
+%
+% Makes `<key>` behave as a boolean option. That is, it takes values true or false, with
+% true being the default value, but set to false by default. Unlike `.is if`, you don't
+% need to supply a TeX-if name, since the key itself is used to store the current
+% selected value as an etoolbox toggle. This is more flexible and convenient, as you
+% can also make toggles that depend on other toggles.
+%
+%   \pgfkeys{
+%     my package/.is family,
+%     my package,
+%     numbered/.is toggle,
+%     in toc/.is toggle,
+%     in toc/if numbered/.style = {in toc/.toggle link=/my package/numbered},
+%   }
+%
+% Options are selected as usual
+%
+%   \pgfkeys{
+%     my package,
+%     in toc = if numbered   % will be true or false depending on `numbered`
+%     numbered = true,
+%   }
+%
+% And then you one can write conditionals such as
+%
+%   \iftoggle{/my package/numbered}{numbered is true}{numbered is false}
+%   \iftoggle{/my package/in toc}{in toc is true}{in toc is false}
+%
+\pgfkeys{/handlers/.is toggle/.code=%
+  \edef\ez@togglename{\pgfkeyscurrentpath}%
+  \providetoggle{\ez@togglename}%
+  \pgfkeys{
+    \pgfkeyscurrentpath/.cd,
+    .is choice,
+    true/.ecode  = \noexpand\toggletrue{\ez@togglename},
+    false/.ecode = \noexpand\togglefalse{\ez@togglename},
+    .default    = true}}
+
+\pgfkeys{/handlers/.toggle test/.code=\deftoggle{\pgfkeyscurrentpath}{#1}}
+\pgfkeys{/handlers/.toggle link/.code=\linktoggle{\pgfkeyscurrentpath}{#1}}
+
+\pgfkeys{/handlers/.add toggle/.code=\pgfkeys{\pgfkeyscurrentpath/#1/.is toggle}}
+\pgfkeys{/handlers/.add toggles/.code=\pgfkeys{\pgfkeyscurrentpath/.add toggle/.list={#1}}}
+
+\endinput
