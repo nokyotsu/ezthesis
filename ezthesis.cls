@@ -32,7 +32,6 @@
   quality/.is code choice,
   quality/draft/.code={\PassOptionsToClass{draft}{report}},
   quality/final/.code={\PassOptionsToClass{final}{report}},
-  quality=final,
   final/.style={quality=final,timestamp=false},
   draft/.style={quality=draft,timestamp=true},
   preprint/.style={draft},
@@ -41,15 +40,29 @@
 % User options:
 %   - 10pt/11pt/12pt:
 %       Select font size. The default is 12pt.
+%   - oneside/twoside:
+%       Adjust margins for oneside/twoside printing. Default is twoside.
 \ClassOptions{
-  fontsize/.is code choice,
-  fontsize/10pt/.code={\PassOptionsToClass{10pt}{report}},
-  fontsize/11pt/.code={\PassOptionsToClass{11pt}{report}},
-  fontsize/12pt/.code={\PassOptionsToClass{12pt}{report}},
-  fontsize=12pt,
-  10pt/.style={fontsize=10pt},
-  11pt/.style={fontsize=11pt},
-  12pt/.style={fontsize=12pt},
+  font size/.is code choice,
+  font size/10pt/.code={\PassOptionsToClass{10pt}{report}},
+  font size/11pt/.code={\PassOptionsToClass{11pt}{report}},
+  font size/12pt/.code={\PassOptionsToClass{12pt}{report}},
+  10pt/.style={font size=10pt},
+  11pt/.style={font size=11pt},
+  12pt/.style={font size=12pt},
+  page sides/.is code choice,
+  page sides/one/.code={\PassOptionsToClass{oneside}{report}},
+  page sides/two/.code={\PassOptionsToClass{twoside}{report}},
+  oneside/.style={page sides=one},
+  twoside/.style={page sides=two},
+}
+
+% Default options
+\ClassOptions{
+  timestamp=false,
+  quality=final,
+  font size=12pt,
+  page sides=two,
 }
 
 % All other options are passed to report class
@@ -59,7 +72,8 @@
 \ProcessPgfOptions{/ezthesis}
 \ClassOptions{
   quality/.eval,
-  fontsize/.eval,
+  font size/.eval,
+  page sides/.eval
 }
 \LoadClass{report}
 
@@ -103,10 +117,6 @@
 
 %% class options
 \DeclareOption{spanish}{\@spanishtrue}
-\DeclareOption{twoside}{\PassLayoutOptions{twoside}}
-\DeclareOption{oneside}{%
-	\PassOptionsToClass{oneside}{report}%
-	\PassOptionsToPackage{twoside=false}{geometry}}
 \DeclareOption{singlespace}{\gdef\select@spacing{\singlespacing}}
 \DeclareOption{onehalfspace}{\gdef\select@spacing{\onehalfspacing}}
 \DeclareOption{doublespace}{\gdef\select@spacing{\doublespacing}}
@@ -119,7 +129,7 @@
 \DeclareOption{nonatbib}{\@natbibfalse}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
 
-\ExecuteOptions{final,twoside,onehalfspace,authoryear}
+\ExecuteOptions{final,onehalfspace,authoryear}
 \ProcessOptions\relax
 \LoadClass{report}
 
