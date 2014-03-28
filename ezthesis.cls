@@ -1,12 +1,76 @@
 %% ezthesis class for LaTeX2e.
 %%
-%% A custom thesis class
+%% A customisable class for thesis writing
 %% by Juan Antonio Navarro Perez
 %% http://navarroj.com/latex
 %% ezlatex@navarroj.com
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{ezthesis}[2007/08/08 A custom thesis class]
+\ProvidesClass{ezthesis}[2014/27/03 A customisable class for thesis writing]
+
+\RequirePackage{pgfopts}
+\RequirePackage{ezkeys}
+
+\newcommand*\ClassOptions{\pgfqkeys{/ezthesis}}
+\newcommand*\ifclasstoggle[1]{\iftoggle{/ezthesis/#1}}
+
+% User options:
+%   - final:
+%       Version ready for printing. All packages are configured to produce
+%       a final version of the document. Graphics are shown, while timestamps
+%       and overfull marks are hidden.
+%   - preprint:
+%       Timestamps and overfull boxes are added to the document, but graphics
+%       and features added by other packages remain active unless explicitly
+%       disabled.
+%   - draft:
+%       Timestamps and overfull boxes are added to the document. Also graphics
+%       are hidden and packages are requested to disable features for a faster
+%       compilation time.
+\ClassOptions{
+  timestamp/.is toggle,
+  quality/.is code choice,
+  quality/draft/.code={\PassOptionsToClass{draft}{report}},
+  quality/final/.code={\PassOptionsToClass{final}{report}},
+  quality=final,
+  final/.style={quality=final,timestamp=false},
+  draft/.style={quality=draft,timestamp=true},
+  preprint/.style={draft},
+}
+
+\ClassOptions{
+  .unknown/.code={\PassOptionsToClass{\pgfkeyscurrentname}{report}},
+}
+\ProcessPgfOptions{/ezthesis}
+\ClassOptions{
+  quality/.eval,
+}
+\LoadClass{report}
+
+\def\author#1{\gdef\insertauthor{#1}\gdef\@author{#1}}
+\def\title#1{\gdef\inserttitle{#1}\gdef\@title{#1}}
+\def\supervisor#1{\gdef\insertsupervisor{#1}}
+\def\institution#1{\gdef\insertinstitution{#1}}
+\def\degree#1{\gdef\insertdegree{#1}}
+\def\faculty#1{\gdef\insertfaculty{#1}}
+\def\department#1{\gdef\insertdepartment{#1}}
+\def\submitdate#1{\gdef\insertsubmitdate{#1}}
+\submitdate{\number\the\year}
+
+%% title page building blocks
+\renewenvironment{titlepage}%
+	{\let\ez@blockfill\relax
+	 \thispagestyle{empty}\centering\null\vskip1in}
+	{\vskip.5in\newpage}
+
+\newcommand{\TitleBlock}[2][\ez@blockfill]{#1{#2\par}\let\ez@blockfill\vfill}
+
+%% sectioning commands
+\def\prefacesection#1{\clearpage\phantomsection
+	\addcontentsline{toc}{chapter}{#1}\chapter*{#1}\markboth{#1}{}}
+\let\phantomsection\@empty
+
+\endinput
 
 %% switches
 \newif\if@spanish\@spanishfalse
@@ -60,16 +124,6 @@
   \RequirePackage[activeacute,spanish]{babel}
 \fi
 
-%% fields
-\def\author#1{\gdef\insertauthor{#1}\gdef\@author{#1}}
-\def\title#1{\gdef\inserttitle{#1}\gdef\@title{#1}}
-\def\supervisor#1{\gdef\insertsupervisor{#1}}
-\def\institution#1{\gdef\insertinstitution{#1}}
-\def\degree#1{\gdef\insertdegree{#1}}
-\def\faculty#1{\gdef\insertfaculty{#1}}
-\def\department#1{\gdef\insertdepartment{#1}}
-\def\submitdate#1{\gdef\insertsubmitdate{#1}}
-
 % some defaults and labels
 \if@spanish
   \author{Falta nombre de autor}
@@ -90,7 +144,7 @@
   \department{School of Computer Science}
   \def\draftlabel{DRAFT}
 \fi
-\submitdate{\number\the\year}
+
 
 %% time and date
 \newcount\hours \newcount\minutes
@@ -162,10 +216,6 @@
 
 \pagenumbering{arabic}
 
-%% sectioning commands
-\def\prefacesection#1{\clearpage\phantomsection
-	\addcontentsline{toc}{chapter}{#1}\chapter*{#1}\markboth{#1}{}}
-
 %% Bibliography - natbib
 \if@natbib
   \if@bibnumbers
@@ -196,14 +246,6 @@
 	\AtBeginDocument{\bibliographyfix}
 \fi
 
-%% title page building blocks
-\renewenvironment{titlepage}%
-	{\let\ez@blockfill\relax
-	 \thispagestyle{empty}\centering\null\vskip1in}
-	{\vskip.5in\newpage}
-
-\newcommand{\TitleBlock}[2][\ez@blockfill]{#1{#2\par}\let\ez@blockfill\vfill}
-
 %% Graphics and colors
 \if@graphicx
 	\RequirePackage{graphicx}
@@ -217,7 +259,6 @@
 \fi
 
 % Linking and pdf options
-\let\phantomsection\@empty
 \def\hyperlinking{%
 	\providecommand\theHalgorithm{\thealgorithm}
 	\providecommand\theHdefinition{\thedefinition}
