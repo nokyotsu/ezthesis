@@ -42,6 +42,8 @@
 %       Select font size. The default is 12pt.
 %   - oneside/twoside:
 %       Adjust margins for oneside/twoside printing. Default is twoside.
+%   - singlespacing/onehalfspacing/doublespacing:
+%       Select spacing between lines. Default is onehalfspacing.
 \ClassOptions{
   font size/.is code choice,
   font size/10pt/.code={\PassOptionsToClass{10pt}{report}},
@@ -55,6 +57,14 @@
   page sides/two/.code={\PassOptionsToClass{twoside}{report}},
   oneside/.style={page sides=one},
   twoside/.style={page sides=two},
+  spacing/.is code choice,
+  spacing/disable/.code={},
+  spacing/single/.code={\RequirePackage[singlespacing]{setspace}},
+  spacing/one half/.code={\RequirePackage[onehalfspacing]{setspace}},
+  spacing/double/.code={\RequirePackage[doublespacing]{setspace}},
+  singlespacing/.style={spacing=single},
+  onehalfspacing/.style={spacing=one half},
+  doublespacing/.style={spacing=double},
 }
 
 % Default options
@@ -63,6 +73,7 @@
   quality=final,
   font size=12pt,
   page sides=two,
+  spacing=one half,
 }
 
 % All other options are passed to report class
@@ -73,9 +84,12 @@
 \ClassOptions{
   quality/.eval,
   font size/.eval,
-  page sides/.eval
+  page sides/.eval,
 }
 \LoadClass{report}
+\ClassOptions{
+  spacing/.eval,
+}
 
 \def\author#1{\gdef\insertauthor{#1}\gdef\@author{#1}}
 \def\title#1{\gdef\inserttitle{#1}\gdef\@title{#1}}
