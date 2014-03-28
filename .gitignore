@@ -31,3 +31,5 @@
 *.vrb
 *.xdy
 *.tdo
+.DS_Store
+tesis.pdf
