@@ -221,11 +221,6 @@
         \noexpand\pgfkeysalso{/errors/unknown choice value={\pgfkeysdefaultpath}{##1}}%
       }}}}
 
-% Fix a bug in the `/errors/unknown choice value={offending key}{value}` key
-% https://sourceforge.net/tracker/?func=detail&aid=3582837&group_id=142562&atid=752792
-%\pgfkeys{/errors/unknown choice value/.code 2 args=\pgfkeys@error{%
-%    Choice '#2' unknown in key '#1'. I am going to ignore this key}}
-
 % Key handler `<key>/.is toggle`
 %
 % Makes `<key>` behave as a boolean option. That is, it takes values true or false, with
@@ -263,7 +258,8 @@
     .is choice,
     true/.ecode  = \noexpand\toggletrue{\ez@togglename},
     false/.ecode = \noexpand\togglefalse{\ez@togglename},
-    .default    = true}}
+    .default     = true,
+    .set         = false}}
 
 \pgfkeys{/handlers/.toggle test/.code=\deftoggle{\pgfkeyscurrentpath}{#1}}
 \pgfkeys{/handlers/.toggle link/.code=\linktoggle{\pgfkeyscurrentpath}{#1}}
