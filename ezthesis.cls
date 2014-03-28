@@ -38,12 +38,28 @@
   preprint/.style={draft},
 }
 
+% User options:
+%   - 10pt/11pt/12pt:
+%       Select font size. The default is 12pt.
+\ClassOptions{
+  fontsize/.is code choice,
+  fontsize/10pt/.code={\PassOptionsToClass{10pt}{report}},
+  fontsize/11pt/.code={\PassOptionsToClass{11pt}{report}},
+  fontsize/12pt/.code={\PassOptionsToClass{12pt}{report}},
+  fontsize=12pt,
+  10pt/.style={fontsize=10pt},
+  11pt/.style={fontsize=11pt},
+  12pt/.style={fontsize=12pt},
+}
+
+% All other options are passed to report class
 \ClassOptions{
   .unknown/.code={\PassOptionsToClass{\pgfkeyscurrentname}{report}},
 }
 \ProcessPgfOptions{/ezthesis}
 \ClassOptions{
   quality/.eval,
+  fontsize/.eval,
 }
 \LoadClass{report}
 
@@ -74,7 +90,6 @@
 
 %% switches
 \newif\if@spanish\@spanishfalse
-\newif\if@draft\@draftfalse
 \newif\if@bibfix\@bibfixtrue
 \newif\if@fancyhdr\@fancyhdrtrue
 \newif\if@colors\@colorstrue
@@ -87,14 +102,7 @@
 	\PassOptionsToPackage{#1}{geometry}}
 
 %% class options
-\DeclareOption{draft}{%
-	\@drafttrue\PassOptionsToClass{draft}{report}
-	\PassOptionsToClass{draft}{graphicx}}
-\DeclareOption{draftmarks}{\@drafttrue\PassOptionsToClass{draft}{report}}
 \DeclareOption{spanish}{\@spanishtrue}
-\DeclareOption{final}{\@draftfalse}
-\DeclareOption{letterpaper}{\PassLayoutOptions{letterpaper}}
-\DeclareOption{a4paper}{\PassLayoutOptions{a4paper}}
 \DeclareOption{twoside}{\PassLayoutOptions{twoside}}
 \DeclareOption{oneside}{%
 	\PassOptionsToClass{oneside}{report}%
@@ -102,9 +110,6 @@
 \DeclareOption{singlespace}{\gdef\select@spacing{\singlespacing}}
 \DeclareOption{onehalfspace}{\gdef\select@spacing{\onehalfspacing}}
 \DeclareOption{doublespace}{\gdef\select@spacing{\doublespacing}}
-\DeclareOption{10pt}{\gdef\select@fontsz{\PassOptionsToClass{10pt}{report}}}
-\DeclareOption{11pt}{\gdef\select@fontsz{\PassOptionsToClass{11pt}{report}}}
-\DeclareOption{12pt}{\gdef\select@fontsz{\PassOptionsToClass{12pt}{report}}}
 \DeclareOption{numbers}{\@bibnumberstrue}
 \DeclareOption{authoryear}{\@bibnumbersfalse}
 \DeclareOption{nobibtoc}{\@bibfixfalse}
@@ -114,9 +119,8 @@
 \DeclareOption{nonatbib}{\@natbibfalse}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
 
-\ExecuteOptions{final,twoside,letterpaper,onehalfspace,12pt,authoryear}
+\ExecuteOptions{final,twoside,onehalfspace,authoryear}
 \ProcessOptions\relax
-\select@fontsz
 \LoadClass{report}
 
 %% spanish
