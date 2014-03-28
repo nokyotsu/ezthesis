@@ -1,4 +1,6 @@
-\documentclass[oneside,numbers,spanish]{ezthesis}
+\documentclass[oneside,numbers,bacon,preprint]{ezthesis}
+\usepackage{natbib}
+\usepackage{graphicx}
 %% # Opciones disponibles para el documento #
 %%
 %% Las opciones con un (*) son las opciones predeterminadas.
@@ -65,7 +67,7 @@
 %% El siguiente comando agrega ligas activas en el documento para las
 %% referencias cruzadas y citas bibliogr'aficas. Tiene que ser *la 'ultima*
 %% instrucci'on antes de \begin{document}.
-\hyperlinking
+%\hyperlinking
 \begin{document}
 
 %% En esta secci'on se describe la estructura del documento de la tesis.
@@ -93,6 +95,7 @@
 %% Por cada cap'itulo hay que crear un nuevo archivo e incluirlo aqu'i.
 %% Mirar el archivo "intro.tex" para un ejemplo y recomendaciones para
 %% escribir.
+\include{test}
 \include{intro}
 %\include{capitulo1}
 %\include{capitulo2}
