@@ -67,6 +67,29 @@
   doublespacing/.style={spacing=double},
 }
 
+\ClassOptions{
+  language/.is code choice,
+  language/disable/.code={},
+  language/spanish/.code={%
+    \RequirePackage[activeacute,spanish]{babel}
+    \author{Falta nombre de autor}
+    \title{Falta t\'itulo de la tesis}
+    \degree{Doctorado}
+    \supervisor{Falta nombre del supervisor}
+    \institution{Universidad de Alg\'un Sitio}
+    \faculty{Facultad de Ingenier\'ia y Ciencias}
+    \department{Escuela de C\'omputo}
+    \def\draftlabel{BORRADOR}
+  },
+  language/mexico/.code={%
+    \PassOptionsToPackage{spanish,es-tabla,es-nodecimaldot,es-noquoting}{babel}
+    \pgfkeysalso{language/spanish}
+  },
+  language=disable,
+  spanish/.style={language=spanish},
+  mexico/.style={language=mexico},
+}
+
 % Default options
 \ClassOptions{
   timestamp=false,
@@ -87,9 +110,6 @@
   page sides/.eval,
 }
 \LoadClass{report}
-\ClassOptions{
-  spacing/.eval,
-}
 
 \def\author#1{\gdef\insertauthor{#1}\gdef\@author{#1}}
 \def\title#1{\gdef\inserttitle{#1}\gdef\@title{#1}}
@@ -99,7 +119,21 @@
 \def\faculty#1{\gdef\insertfaculty{#1}}
 \def\department#1{\gdef\insertdepartment{#1}}
 \def\submitdate#1{\gdef\insertsubmitdate{#1}}
+\author{Author name missing}
+\title{Thesis title missing}
+\degree{Doctor of Philosophy}
+\supervisor{Supervisor name missing}
+\institution{The University of Somewhere}
+\faculty{Faculty of Engineering and Physical Sciences}
+\department{School of Computer Science}
+\def\draftlabel{DRAFT}
 \submitdate{\number\the\year}
+
+\ClassOptions{
+  spacing/.eval,
+  language/.eval,
+}
+
 
 %% title page building blocks
 \renewenvironment{titlepage}%
@@ -117,7 +151,6 @@
 \endinput
 
 %% switches
-\newif\if@spanish\@spanishfalse
 \newif\if@bibfix\@bibfixtrue
 \newif\if@fancyhdr\@fancyhdrtrue
 \newif\if@colors\@colorstrue
@@ -130,10 +163,6 @@
 	\PassOptionsToPackage{#1}{geometry}}
 
 %% class options
-\DeclareOption{spanish}{\@spanishtrue}
-\DeclareOption{singlespace}{\gdef\select@spacing{\singlespacing}}
-\DeclareOption{onehalfspace}{\gdef\select@spacing{\onehalfspacing}}
-\DeclareOption{doublespace}{\gdef\select@spacing{\doublespacing}}
 \DeclareOption{numbers}{\@bibnumberstrue}
 \DeclareOption{authoryear}{\@bibnumbersfalse}
 \DeclareOption{nobibtoc}{\@bibfixfalse}
@@ -143,36 +172,9 @@
 \DeclareOption{nonatbib}{\@natbibfalse}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
 
-\ExecuteOptions{final,onehalfspace,authoryear}
+\ExecuteOptions{final,authoryear}
 \ProcessOptions\relax
 \LoadClass{report}
-
-%% spanish
-\if@spanish
-  \RequirePackage[activeacute,spanish]{babel}
-\fi
-
-% some defaults and labels
-\if@spanish
-  \author{Falta nombre de autor}
-  \title{Falta t\'itulo de la tesis}
-  \degree{Doctorado}
-  \supervisor{Falta nombre del supervisor}
-  \institution{Universidad de Alg\'un Sitio}
-  \faculty{Facultad de Ingenier\'ia y Ciencias}
-  \department{Escuela de C\'omputo}
-  \def\draftlabel{BORRADOR}
-\else
-  \author{Author name missing}
-  \title{Thesis title missing}
-  \degree{Doctor of Philosophy}
-  \supervisor{Supervisor name missing}
-  \institution{The University of Somewhere}
-  \faculty{Faculty of Engineering and Physical Sciences}
-  \department{School of Computer Science}
-  \def\draftlabel{DRAFT}
-\fi
-
 
 %% time and date
 \newcount\hours \newcount\minutes
@@ -192,10 +194,6 @@
 \else
 	\def\draftmark{}
 \fi
-
-%% spacing
-\RequirePackage{setspace}
-\select@spacing
 
 %% margins
 \RequirePackage[
