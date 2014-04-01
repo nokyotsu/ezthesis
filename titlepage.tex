@@ -38,14 +38,14 @@
 %%   \insertsubmitdate
 
 \begin{titlepage}
-  \TitleBlock{\scshape\insertinstitution}
-  \TitleBlock[\bigskip]{\scshape\insertfaculty}
-  \TitleBlock{\Huge\scshape\inserttitle}
+  \TitleBlock{\scshape\insertfield{institution}}
+  \TitleBlock[\bigskip]{\scshape\insertfield{faculty}}
+  \TitleBlock{\Huge\scshape\insertfield{title}}
   \TitleBlock{\scshape
-    Tesis presentada por \insertauthor \\
-    para obtener el grado de \insertdegree}
-  \TitleBlock{\insertsubmitdate}
-  \TitleBlock[\bigskip]{\insertdepartment}
+    Tesis presentada por \insertfield{author} \\
+    para obtener el grado de \insertfield{degree}}
+  \TitleBlock{\insertfield{date}}
+  \TitleBlock[\bigskip]{\insertfield{department}}
 \end{titlepage}
 
 %% Nota 1:

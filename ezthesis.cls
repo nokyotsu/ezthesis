@@ -11,8 +11,10 @@
 \RequirePackage{pgfopts}
 \RequirePackage{ezkeys}
 
-\newcommand*\ClassOptions{\pgfqkeys{/ezthesis}}
-\newcommand*\ifclasstoggle[1]{\iftoggle{/ezthesis/#1}}
+\newcommand*\ClassOptions{\pgfqkeys{/ezthesis/options}}
+\newcommand*\ifclasstoggle[1]{\iftoggle{/ezthesis/options/#1}}
+\newcommand*\setfields{\pgfqkeys{/ezthesis/fields}}
+\newcommand*\insertfield[1]{\pgfkeysusevalue{/ezthesis/fields/#1}}
 
 % User options:
 %   - final:
@@ -72,17 +74,10 @@
   language/disable/.code={},
   language/spanish/.code={%
     \RequirePackage[activeacute,spanish]{babel}
-    \author{Falta nombre de autor}
-    \title{Falta t\'itulo de la tesis}
-    \degree{Doctorado}
-    \supervisor{Falta nombre del supervisor}
-    \institution{Universidad de Alg\'un Sitio}
-    \faculty{Facultad de Ingenier\'ia y Ciencias}
-    \department{Escuela de C\'omputo}
     \def\draftlabel{BORRADOR}
   },
   language/mexico/.code={%
-    \PassOptionsToPackage{spanish,es-tabla,es-nodecimaldot,es-noquoting}{babel}
+    \PassOptionsToPackage{spanish,es-nodecimaldot,es-tabla,es-noquoting}{babel}
     \pgfkeysalso{language/spanish}
   },
   language=disable,
@@ -103,7 +98,7 @@
 \ClassOptions{
   .unknown/.code={\PassOptionsToClass{\pgfkeyscurrentname}{report}},
 }
-\ProcessPgfOptions{/ezthesis}
+\ProcessPgfOptions{/ezthesis/options}
 \ClassOptions{
   quality/.eval,
   font size/.eval,
@@ -111,23 +106,25 @@
 }
 \LoadClass{report}
 
-\def\author#1{\gdef\insertauthor{#1}\gdef\@author{#1}}
-\def\title#1{\gdef\inserttitle{#1}\gdef\@title{#1}}
-\def\supervisor#1{\gdef\insertsupervisor{#1}}
-\def\institution#1{\gdef\insertinstitution{#1}}
-\def\degree#1{\gdef\insertdegree{#1}}
-\def\faculty#1{\gdef\insertfaculty{#1}}
-\def\department#1{\gdef\insertdepartment{#1}}
-\def\submitdate#1{\gdef\insertsubmitdate{#1}}
-\author{Author name missing}
-\title{Thesis title missing}
-\degree{Doctor of Philosophy}
-\supervisor{Supervisor name missing}
-\institution{The University of Somewhere}
-\faculty{Faculty of Engineering and Physical Sciences}
-\department{School of Computer Science}
+\setfields{
+  author/.initial = {Some Person},
+  title/.initial = {A Thesis Title},
+  date/.initial = {\number\the\year},
+  degree/.initial = {Doctor of Philosophy},
+  supervisor/.initial = {A. Supervisor},
+  institution/.initial = {The University of Somewhere},
+  faculty/.initial = {Faculty of Improbability},
+  department/.initial = {School of Life},
+}
+
+\renewcommand\author{\pgfkeyssetvalue{/ezthesis/fields/author}}
+\renewcommand\title{\pgfkeyssetvalue{/ezthesis/fields/title}}
+\renewcommand\date{\pgfkeyssetvalue{/ezthesis/fields/date}}
+\renewcommand\@author{\insertfield{author}}
+\renewcommand\@title{\insertfield{title}}
+\renewcommand\@date{\insertfield{date}}
+
 \def\draftlabel{DRAFT}
-\submitdate{\number\the\year}
 
 \ClassOptions{
   spacing/.eval,
