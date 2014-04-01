@@ -32,8 +32,8 @@
 \ClassOptions{
   timestamp/.is toggle,
   quality/.is code choice,
-  quality/draft/.code={\PassOptionsToClass{draft}{report}},
-  quality/final/.code={\PassOptionsToClass{final}{report}},
+  quality/draft/.code={\PassOptionsToClass{draft}{book}},
+  quality/final/.code={\PassOptionsToClass{final}{book}},
   final/.style={quality=final,timestamp=false},
   draft/.style={quality=draft,timestamp=true},
   preprint/.style={draft},
@@ -48,15 +48,15 @@
 %       Select spacing between lines. Default is onehalfspacing.
 \ClassOptions{
   font size/.is code choice,
-  font size/10pt/.code={\PassOptionsToClass{10pt}{report}},
-  font size/11pt/.code={\PassOptionsToClass{11pt}{report}},
-  font size/12pt/.code={\PassOptionsToClass{12pt}{report}},
+  font size/10pt/.code={\PassOptionsToClass{10pt}{book}},
+  font size/11pt/.code={\PassOptionsToClass{11pt}{book}},
+  font size/12pt/.code={\PassOptionsToClass{12pt}{book}},
   10pt/.style={font size=10pt},
   11pt/.style={font size=11pt},
   12pt/.style={font size=12pt},
   page sides/.is code choice,
-  page sides/one/.code={\PassOptionsToClass{oneside}{report}},
-  page sides/two/.code={\PassOptionsToClass{twoside}{report}},
+  page sides/one/.code={\PassOptionsToClass{oneside}{book}},
+  page sides/two/.code={\PassOptionsToClass{twoside}{book}},
   oneside/.style={page sides=one},
   twoside/.style={page sides=two},
   spacing/.is code choice,
@@ -74,7 +74,8 @@
   language/disable/.code={},
   language/spanish/.code={%
     \RequirePackage[activeacute,spanish]{babel}
-    \def\draftlabel{BORRADOR}
+    \newcommand\spanishdraftname{Borrador}
+    \addto\captionsspanish{\def\draftname{\spanishdraftname}}
   },
   language/mexico/.code={%
     \PassOptionsToPackage{spanish,es-nodecimaldot,es-tabla,es-noquoting}{babel}
@@ -94,9 +95,9 @@
   spacing=one half,
 }
 
-% All other options are passed to report class
+% All other options are passed to book class
 \ClassOptions{
-  .unknown/.code={\PassOptionsToClass{\pgfkeyscurrentname}{report}},
+  .unknown/.code={\PassOptionsToClass{\pgfkeyscurrentname}{book}},
 }
 \ProcessPgfOptions{/ezthesis/options}
 \ClassOptions{
@@ -104,7 +105,7 @@
   font size/.eval,
   page sides/.eval,
 }
-\LoadClass{report}
+\LoadClass{book}
 
 \setfields{
   author/.initial = {Some Person},
@@ -124,13 +125,12 @@
 \renewcommand\@title{\insertfield{title}}
 \renewcommand\@date{\insertfield{date}}
 
-\def\draftlabel{DRAFT}
+\newcommand\draftname{Draft}
 
 \ClassOptions{
   spacing/.eval,
   language/.eval,
 }
-
 
 %% title page building blocks
 \renewenvironment{titlepage}%
@@ -139,11 +139,6 @@
 	{\vskip.5in\newpage}
 
 \newcommand{\TitleBlock}[2][\ez@blockfill]{#1{#2\par}\let\ez@blockfill\vfill}
-
-%% sectioning commands
-\def\prefacesection#1{\clearpage\phantomsection
-	\addcontentsline{toc}{chapter}{#1}\chapter*{#1}\markboth{#1}{}}
-\let\phantomsection\@empty
 
 \endinput
 
@@ -156,7 +151,7 @@
 \newif\if@bibnumbers\@bibnumbersfalse
 
 \def\PassLayoutOptions#1{%
-	\PassOptionsToClass{#1}{report}
+	\PassOptionsToClass{#1}{book}
 	\PassOptionsToPackage{#1}{geometry}}
 
 %% class options

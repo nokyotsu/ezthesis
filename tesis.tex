@@ -1,6 +1,7 @@
 \documentclass[mexico,preprint]{ezthesis}
 \usepackage{natbib}
 \usepackage{graphicx}
+\usepackage{hyperref}
 %\RenewTranslation{Spanish}{chapter}{Capitulín}
 %% # Opciones disponibles para el documento #
 %%
@@ -72,7 +73,6 @@
 %% instrucci'on antes de \begin{document}.
 %\hyperlinking
 \begin{document}
-
 %% En esta secci'on se describe la estructura del documento de la tesis.
 %% Consulta los reglamentos de tu universidad para determinar el orden
 %% y la cantidad de secciones que debes de incluir.
@@ -85,6 +85,7 @@
 %% Por cada prefacio (p.e. agradecimientos, resumen, etc.) crear
 %% un nuevo archivo e incluirlo aqu'i.
 %% Para m'as detalles y un ejemplo mirar el archivo "gracias.tex".
+\frontmatter
 \include{gracias}
 
 %% # 'Indices y listas de contenido #
@@ -98,6 +99,7 @@
 %% Por cada cap'itulo hay que crear un nuevo archivo e incluirlo aqu'i.
 %% Mirar el archivo "intro.tex" para un ejemplo y recomendaciones para
 %% escribir.
+\mainmatter
 \include{test}
 \include{intro}
 %\include{capitulo1}
