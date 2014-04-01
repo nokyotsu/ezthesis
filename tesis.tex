@@ -2,6 +2,7 @@
 \usepackage{natbib}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\bibliographystyle{plain}
 %\RenewTranslation{Spanish}{chapter}{Capitulín}
 %% # Opciones disponibles para el documento #
 %%
@@ -72,50 +73,47 @@
 %% referencias cruzadas y citas bibliogr'aficas. Tiene que ser *la 'ultima*
 %% instrucci'on antes de \begin{document}.
 %\hyperlinking
+
 \begin{document}
-%% En esta secci'on se describe la estructura del documento de la tesis.
+%% Ahora describimos la estructura del documento de la tesis.
 %% Consulta los reglamentos de tu universidad para determinar el orden
 %% y la cantidad de secciones que debes de incluir.
 
-%% # Portada de la tesis #
-%% Mirar el archivo "titlepage.tex" para los detalles.
-\include{titlepage}
-
-%% # Prefacios #
-%% Por cada prefacio (p.e. agradecimientos, resumen, etc.) crear
-%% un nuevo archivo e incluirlo aqu'i.
-%% Para m'as detalles y un ejemplo mirar el archivo "gracias.tex".
 \frontmatter
+%% Portada, prefacios (e.g. agradecimientos, resumen, etc.), e 'indices
+%% de la tesis. Los "cap'itulos" agregados en esta secci'on no se numeran,
+%% pero s'i aparecen en el 'indice general.
+%% En el archivo "titlepage.tex" se muestra como dise~nar una portada.
+%% El archivo "gracias.tex" es un ejemplo de una entrada en el prefacio.
+\include{titlepage}
 \include{gracias}
-
-%% # 'Indices y listas de contenido #
-%% Quitar los comentarios en las lineas siguientes para obtener listas de
-%% figuras y cuadros/tablas.
 \tableofcontents
-%\listoffigures
-%\listoftables
+\listoffigures
+\listoftables
+%\include{abstract}
 
-%% # Cap'itulos #
-%% Por cada cap'itulo hay que crear un nuevo archivo e incluirlo aqu'i.
-%% Mirar el archivo "intro.tex" para un ejemplo y recomendaciones para
-%% escribir.
 \mainmatter
+%% Los cap'itulos agregados en esta parte aparecen numerados: 1, 2, 3, ...
+%% El archivo "intro.tex" muestra un ejemplo y algunas recomendaciones.
+%% La bibliograf'ia se suele incluir al final de todos los cap'itulos,
+%% mira el archivo "biblio.bib" para m'as detalles.
 \include{test}
 \include{intro}
 %\include{capitulo1}
 %\include{capitulo2}
 %\include{capitulo3}
-%\include{conclu}
+%\include{conclusiones}
+\bibliography{biblio}
 
 \appendix
-%% Cap'itulos incluidos despues del comando \appendix aparecen como ap'endices
-%% de la tesis.
-%\include{apendiceA}
+%% Los cap'itulos agregados en esta parte son ap'endices y aparecen
+%% numerados: A, B, C, ...
+%\include{apendiceB}
 %\include{apendiceB}
 %\include{apendiceC}
 
-%% Incluir la bibliograf'ia. Mirar el archivo "biblio.bib" para m'as detales
-%% y un ejemplo.
-\bibliography{biblio}
+\backmatter
+%% Los cap'itulos agregados en esta parte son ep'ilogos y no son numerados.
+%\include{epilogo}
 
 \end{document}

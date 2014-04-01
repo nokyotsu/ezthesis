@@ -71,7 +71,7 @@
 
 \ClassOptions{
   language/.is code choice,
-  language/disable/.code={},
+  language/none/.code={},
   language/spanish/.code={%
     \RequirePackage[activeacute,spanish]{babel}
     \newcommand\spanishdraftname{Borrador}
@@ -81,9 +81,15 @@
     \PassOptionsToPackage{spanish,es-nodecimaldot,es-tabla,es-noquoting}{babel}
     \pgfkeysalso{language/spanish}
   },
-  language=disable,
   spanish/.style={language=spanish},
   mexico/.style={language=mexico},
+}
+
+\ClassOptions{
+  toc/.is code choice,
+  toc/minimal/.code={},
+  toc/standard/.code={\RequirePackage[nottoc]{tocbibind}},
+  toc/complete/.code={\RequirePackage{tocbibind}},
 }
 
 % Default options
@@ -93,6 +99,8 @@
   font size=12pt,
   page sides=two,
   spacing=one half,
+  language=none,
+  toc=standard,
 }
 
 % All other options are passed to book class
@@ -105,7 +113,7 @@
   font size/.eval,
   page sides/.eval,
 }
-\LoadClass{book}
+\LoadClass[openany]{book}
 
 \setfields{
   author/.initial = {Some Person},
@@ -128,8 +136,9 @@
 \newcommand\draftname{Draft}
 
 \ClassOptions{
-  spacing/.eval,
   language/.eval,
+  spacing/.eval,
+  toc/.eval,
 }
 
 %% title page building blocks
