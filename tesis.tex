@@ -1,7 +1,8 @@
 \documentclass[mexico,preprint]{ezthesis}
 \usepackage{natbib}
-\usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{blindtext}
+\newcommand\blindchapter[1]{\chapter{#1}\blindtext}
 \bibliographystyle{plain}
 %\RenewTranslation{Spanish}{chapter}{Capitulín}
 %% # Opciones disponibles para el documento #
@@ -90,7 +91,7 @@
 \tableofcontents
 \listoffigures
 \listoftables
-%\include{abstract}
+\blindchapter{Resumen}
 
 \mainmatter
 %% Los cap'itulos agregados en esta parte aparecen numerados: 1, 2, 3, ...

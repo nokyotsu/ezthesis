@@ -34,8 +34,8 @@
   quality/.is code choice,
   quality/draft/.code={\PassOptionsToClass{draft}{book}},
   quality/final/.code={\PassOptionsToClass{final}{book}},
-  final/.style={quality=final,timestamp=false},
-  draft/.style={quality=draft,timestamp=true},
+  final/.style={quality=final,timestamp=false,open chapter=right},
+  draft/.style={quality=draft,timestamp=true,open chapter=any},
   preprint/.style={draft},
 }
 
@@ -59,6 +59,14 @@
   page sides/two/.code={\PassOptionsToClass{twoside}{book}},
   oneside/.style={page sides=one},
   twoside/.style={page sides=two},
+  open chapter/.is code choice,
+  open chapter/any/.code={\PassOptionsToClass{openany}{book}},
+  open chapter/right/.code={\PassOptionsToClass{openright}{book}},
+  openany/.style={open chapter=any},
+  openright/.style={open chapter=right},
+}
+
+\ClassOptions{
   spacing/.is code choice,
   spacing/disable/.code={},
   spacing/single/.code={\RequirePackage[singlespacing]{setspace}},
@@ -92,15 +100,25 @@
   toc/complete/.code={\RequirePackage{tocbibind}},
 }
 
+\ClassOptions{
+  graphics/.is code choice,
+  graphics/false/.code={},
+  graphics/true/.code={\RequirePackage{graphicx}},
+  microtype/.is code choice,
+  microtype/false/.code={},
+  microtype/true/.code={\RequirePackage{microtype}},
+}
+
 % Default options
 \ClassOptions{
-  timestamp=false,
-  quality=final,
+  final,
   font size=12pt,
   page sides=two,
   spacing=one half,
   language=none,
   toc=standard,
+  graphics=true,
+  microtype=true,
 }
 
 % All other options are passed to book class
@@ -109,11 +127,12 @@
 }
 \ProcessPgfOptions{/ezthesis/options}
 \ClassOptions{
+  open chapter/.eval,
   quality/.eval,
   font size/.eval,
   page sides/.eval,
 }
-\LoadClass[openany]{book}
+\LoadClass{book}
 
 \setfields{
   author/.initial = {Some Person},
@@ -139,6 +158,8 @@
   language/.eval,
   spacing/.eval,
   toc/.eval,
+  graphics/.eval,
+  microtype/.eval,
 }
 
 %% title page building blocks
@@ -152,7 +173,6 @@
 \endinput
 
 %% switches
-\newif\if@bibfix\@bibfixtrue
 \newif\if@fancyhdr\@fancyhdrtrue
 \newif\if@colors\@colorstrue
 \newif\if@graphicx\@graphicxtrue
@@ -166,7 +186,6 @@
 %% class options
 \DeclareOption{numbers}{\@bibnumberstrue}
 \DeclareOption{authoryear}{\@bibnumbersfalse}
-\DeclareOption{nobibtoc}{\@bibfixfalse}
 \DeclareOption{nofancyhdr}{\@fancyhdrfalse}
 \DeclareOption{nocolors}{\@colorsfalse}
 \DeclareOption{nographicx}{\@graphicxfalse}
@@ -258,21 +277,6 @@
   \let\cite\citep
 \fi
 
-%% bibliography fix - makes bibliography appear
-%% in table of contents, and makes it work nice
-%% with hyperref
-\def\bibliographyfix{%
-	\let\old@bibliography\bibliography
-	\def\bibliography{%
-		\clearpage
-		\phantomsection
-		\addcontentsline{toc}{chapter}{\bibname}%
-		\old@bibliography}}
-
-\if@bibfix
-	\AtBeginDocument{\bibliographyfix}
-\fi
-
 %% Graphics and colors
 \if@graphicx
 	\RequirePackage{graphicx}
@@ -298,8 +302,8 @@
 
 	% properties of pdf file
 	\hypersetup{%
-		pdftitle={\inserttitle},pdfauthor={\insertauthor},
-		pdfsubject={\insertdegree\ Thesis, \insertdepartment}}
+		pdftitle={\insertfield{title}},pdfauthor={\insertfield{author}},
+		pdfsubject={\insertfield{degree} Thesis, \insertfield{department}}}
 
 	% color links
 	\if@colors
