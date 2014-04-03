@@ -109,16 +109,43 @@
   microtype/true/.code={\RequirePackage{microtype}},
 }
 
+\ClassOptions{
+  links/.is code choice,
+  links/disable/.code={},
+  links/url/.code={\RequirePackage{url}},
+  links/hyperref/.code={%
+    \RequirePackage{xcolor}
+    \RequirePackage{hyperref}
+	\hypersetup{%
+		colorlinks,
+		linkcolor={red!50!black},
+		citecolor={blue!50!black},
+		urlcolor={blue!80!black}
+	}
+  },
+  hyperlinks/.style={links=hyperref},
+}
+
+\ClassOptions{
+  font style/.is code choice,
+  font style/default/.code={},
+  font style/modern/.code={%
+    \RequirePackage[T1]{fontenc}
+    \RequirePackage{lmodern}\normalfont},
+}
+
 % Default options
 \ClassOptions{
   final,
   font size=12pt,
+  font style=modern,
   page sides=two,
   spacing=one half,
   language=none,
   toc=standard,
   graphics=true,
   microtype=true,
+  links=url,
 }
 
 % All other options are passed to book class
@@ -154,12 +181,14 @@
 
 \newcommand\draftname{Draft}
 
+\ClassOptions{font style/.eval}\normalfont
 \ClassOptions{
   language/.eval,
   spacing/.eval,
   toc/.eval,
   graphics/.eval,
   microtype/.eval,
+  links/.eval,
 }
 
 %% title page building blocks
@@ -175,23 +204,16 @@
 %% switches
 \newif\if@fancyhdr\@fancyhdrtrue
 \newif\if@colors\@colorstrue
-\newif\if@graphicx\@graphicxtrue
 \newif\if@natbib\@natbibtrue
 \newif\if@bibnumbers\@bibnumbersfalse
-
-\def\PassLayoutOptions#1{%
-	\PassOptionsToClass{#1}{book}
-	\PassOptionsToPackage{#1}{geometry}}
 
 %% class options
 \DeclareOption{numbers}{\@bibnumberstrue}
 \DeclareOption{authoryear}{\@bibnumbersfalse}
 \DeclareOption{nofancyhdr}{\@fancyhdrfalse}
 \DeclareOption{nocolors}{\@colorsfalse}
-\DeclareOption{nographicx}{\@graphicxfalse}
 \DeclareOption{nonatbib}{\@natbibfalse}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
-
 \ExecuteOptions{final,authoryear}
 \ProcessOptions\relax
 \LoadClass{report}
@@ -260,8 +282,6 @@
   \AtBeginDocument{\pagestyle{headings}}
 \fi
 
-\pagenumbering{arabic}
-
 %% Bibliography - natbib
 \if@natbib
   \if@bibnumbers
@@ -275,11 +295,6 @@
     \bibliographystyle{plainnat}
   \fi
   \let\cite\citep
-\fi
-
-%% Graphics and colors
-\if@graphicx
-	\RequirePackage{graphicx}
 \fi
 
 \if@colors
@@ -298,7 +313,7 @@
 	\providecommand\theHproposition{\theproposition}
 	\providecommand\theHcorollary{\thecorollary}
 
-	\RequirePackage[final,breaklinks,bookmarks]{hyperref}
+	\RequirePackage[final,breaklinks]{hyperref}
 
 	% properties of pdf file
 	\hypersetup{%
