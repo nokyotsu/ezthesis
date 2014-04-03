@@ -10,6 +10,7 @@
 
 \RequirePackage{pgfopts}
 \RequirePackage{ezkeys}
+\RequirePackage{afterpackage}
 
 \newcommand*\ClassOptions{\pgfqkeys{/ezthesis/options}}
 \newcommand*\ifclasstoggle[1]{\iftoggle{/ezthesis/options/#1}}
@@ -82,16 +83,36 @@
   language/none/.code={},
   language/spanish/.code={%
     \RequirePackage[activeacute,spanish]{babel}
-    \newcommand\spanishdraftname{Borrador}
     \addto\captionsspanish{\def\draftname{\spanishdraftname}}
+    \AfterPackage{hyperref}{%
+      \addto\extrasspanish{\def\tableautorefname{\spanishtablename}}
+    }
   },
   language/mexico/.code={%
     \PassOptionsToPackage{spanish,es-nodecimaldot,es-tabla,es-noquoting}{babel}
     \pgfkeysalso{language/spanish}
+    \PassOptionsToPackage{spanish}{cleveref}
+    \AfterPackage{cleveref}{%
+      \addto\extrasspanish{
+        \Crefname{table}{Tabla}{Tablas}%
+        \if@cref@capitalise%  capitalise set
+          \crefname{table}{Tabla}{Tablas}%
+        \else
+          \crefname{table}{tabla}{tablas}%
+        \fi
+      }
+    }
   },
   spanish/.style={language=spanish},
   mexico/.style={language=mexico},
 }
+
+\ClassOptions{
+  cleveref/.is code choice,
+  cleveref/false/.code={},
+  cleveref/true/.code={\RequirePackage[nameinlink]{cleveref}}
+}
+  
 
 \ClassOptions{
   toc/.is code choice,
@@ -110,18 +131,30 @@
 }
 
 \ClassOptions{
+  color/.is code choice,
+  color/false/.code={},
+  color/true/.code={%
+    \RequirePackage{xcolor}
+    \PassOptionsToPackage{%
+      colorlinks,
+      linkcolor={red!50!black},
+      citecolor={blue!50!black},
+      urlcolor={blue!80!black}
+    }{hyperref}
+  },
+}
+
+\ClassOptions{
   links/.is code choice,
   links/disable/.code={},
   links/url/.code={\RequirePackage{url}},
   links/hyperref/.code={%
-    \RequirePackage{xcolor}
-    \RequirePackage{hyperref}
-	\hypersetup{%
-		colorlinks,
-		linkcolor={red!50!black},
-		citecolor={blue!50!black},
-		urlcolor={blue!80!black}
-	}
+      \RequirePackage{hyperref}
+      \RequirePackage[all]{hypcap}
+      \hypersetup{%
+        pdfauthor={\insertfield{author}},
+        pdftitle={\insertfield{title}},
+      }
   },
   hyperlinks/.style={links=hyperref},
 }
@@ -146,6 +179,8 @@
   graphics=true,
   microtype=true,
   links=url,
+  color=true,
+  cleveref=true,
 }
 
 % All other options are passed to book class
@@ -179,23 +214,37 @@
 \renewcommand\@title{\insertfield{title}}
 \renewcommand\@date{\insertfield{date}}
 
-\newcommand\draftname{Draft}
+\AtBeginDocument{
+  \ClassOptions{
+    links/.eval,
+    cleveref/.eval,
+  }
+%  \addto\extrasspanish{
+%    \def\tablename{Cuadrito}
+%    \def\tableautorefname{Cuadrito}
+%    \crefname{table}{cuadrito}{cuadritos}
+%    \Crefname{table}{Cuadrito}{Cuadritos}
+%  }
+}
 
 \ClassOptions{font style/.eval}\normalfont
 \ClassOptions{
+  color/.eval,
   language/.eval,
   spacing/.eval,
   toc/.eval,
   graphics/.eval,
   microtype/.eval,
-  links/.eval,
 }
+
+\newcommand\draftname{Draft}
+\newcommand\spanishdraftname{Borrador}
 
 %% title page building blocks
 \renewenvironment{titlepage}%
-	{\let\ez@blockfill\relax
-	 \thispagestyle{empty}\centering\null\vskip1in}
-	{\vskip.5in\newpage}
+    {\let\ez@blockfill\relax
+     \thispagestyle{empty}\centering\null\vskip1in}
+    {\vskip.5in\newpage}
 
 \newcommand{\TitleBlock}[2][\ez@blockfill]{#1{#2\par}\let\ez@blockfill\vfill}
 
@@ -203,7 +252,6 @@
 
 %% switches
 \newif\if@fancyhdr\@fancyhdrtrue
-\newif\if@colors\@colorstrue
 \newif\if@natbib\@natbibtrue
 \newif\if@bibnumbers\@bibnumbersfalse
 
@@ -211,7 +259,6 @@
 \DeclareOption{numbers}{\@bibnumberstrue}
 \DeclareOption{authoryear}{\@bibnumbersfalse}
 \DeclareOption{nofancyhdr}{\@fancyhdrfalse}
-\DeclareOption{nocolors}{\@colorsfalse}
 \DeclareOption{nonatbib}{\@natbibfalse}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
 \ExecuteOptions{final,authoryear}
@@ -232,9 +279,9 @@
 \def\shorttime{\number\hours:\ifnum\minutes<10 0\fi\number\minutes\ hrs}
 
 \if@draft
-	\def\draftmark{\draftlabel: \shortdate\ -- \shorttime}
+    \def\draftmark{\draftlabel: \shortdate\ -- \shorttime}
 \else
-	\def\draftmark{}
+    \def\draftmark{}
 \fi
 
 %% margins
@@ -296,42 +343,5 @@
   \fi
   \let\cite\citep
 \fi
-
-\if@colors
-	\RequirePackage{xcolor}
-	\definecolor{dark-red}{rgb}{0.4,0.15,0.15}
-	\definecolor{dark-blue}{rgb}{0.15,0.15,0.4}
-	\definecolor{medium-blue}{rgb}{0,0,0.5}
-\fi
-
-% Linking and pdf options
-\def\hyperlinking{%
-	\providecommand\theHalgorithm{\thealgorithm}
-	\providecommand\theHdefinition{\thedefinition}
-	\providecommand\theHexample{\theexample}
-	\providecommand\theHlemma{\thelemma}
-	\providecommand\theHproposition{\theproposition}
-	\providecommand\theHcorollary{\thecorollary}
-
-	\RequirePackage[final,breaklinks]{hyperref}
-
-	% properties of pdf file
-	\hypersetup{%
-		pdftitle={\insertfield{title}},pdfauthor={\insertfield{author}},
-		pdfsubject={\insertfield{degree} Thesis, \insertfield{department}}}
-
-	% color links
-	\if@colors
-		\hypersetup{%
-			colorlinks,linkcolor={dark-red},citecolor={dark-blue},
-			urlcolor={medium-blue}}
-	\fi
-
-	\renewcommand{\chapterautorefname}{Chapter}
-	\renewcommand{\sectionautorefname}{Section}
-	\renewcommand{\subsectionautorefname}{Section}
-	\renewcommand{\subsubsectionautorefname}{Section}
-	\RequirePackage[all]{hypcap}
-}
 
 \endinput
