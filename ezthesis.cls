@@ -84,6 +84,7 @@
   language/spanish/.code={%
     \RequirePackage[activeacute,spanish]{babel}
     \addto\captionsspanish{\def\draftname{\spanishdraftname}}
+    \PassOptionsToPackage{spanish}{cleveref}
     \AfterPackage{hyperref}{%
       \addto\extrasspanish{\def\tableautorefname{\spanishtablename}}
     }
@@ -91,7 +92,6 @@
   language/mexico/.code={%
     \PassOptionsToPackage{spanish,es-nodecimaldot,es-tabla,es-noquoting}{babel}
     \pgfkeysalso{language/spanish}
-    \PassOptionsToPackage{spanish}{cleveref}
     \AfterPackage{cleveref}{%
       \addto\extrasspanish{
         \Crefname{table}{Tabla}{Tablas}%
@@ -122,6 +122,11 @@
 }
 
 \ClassOptions{
+  geometry/.is code choice,
+  geometry/false/.code={},
+  geometry/true/.code={%
+    \RequirePackage[top=40mm,bottom=33mm,outer=25mm,inner=40mm,headsep=10mm,%
+      headheight=15pt,marginparwidth=15mm]{geometry}},
   graphics/.is code choice,
   graphics/false/.code={},
   graphics/true/.code={\RequirePackage{graphicx}},
@@ -170,6 +175,7 @@
 % Default options
 \ClassOptions{
   final,
+  geometry=false,
   font size=12pt,
   font style=modern,
   page sides=two,
@@ -184,9 +190,9 @@
 }
 
 % All other options are passed to book class
-\ClassOptions{
-  .unknown/.code={\PassOptionsToClass{\pgfkeyscurrentname}{book}},
-}
+%\ClassOptions{
+%  .unknown/.code={\PassOptionsToClass{\pgfkeyscurrentname}{book}},
+%}
 \ProcessPgfOptions{/ezthesis/options}
 \ClassOptions{
   open chapter/.eval,
@@ -219,18 +225,13 @@
     links/.eval,
     cleveref/.eval,
   }
-%  \addto\extrasspanish{
-%    \def\tablename{Cuadrito}
-%    \def\tableautorefname{Cuadrito}
-%    \crefname{table}{cuadrito}{cuadritos}
-%    \Crefname{table}{Cuadrito}{Cuadritos}
-%  }
 }
 
 \ClassOptions{font style/.eval}\normalfont
 \ClassOptions{
-  color/.eval,
+  geometry/.eval,
   language/.eval,
+  color/.eval,
   spacing/.eval,
   toc/.eval,
   graphics/.eval,
